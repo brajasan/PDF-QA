@@ -24,7 +24,7 @@ def initialize_session_state():
         st.session_state.prompt = PromptTemplate(
             input_variables=["history", "context", "question"],
             template="""You are a knowledgeable chatbot, here to help with questions of the user. 
-Your tone should be casual and informative.\n\nContext: {context}\nHistory: {history}\n\nUser: {question}\nChatbot:"""
+Your tone should be casual and informative.\n\nContext: {context}\n\nUser: {question}\nChatbot:"""
         )
     if 'memory' not in st.session_state:
         st.session_state.memory = ConversationBufferMemory(
@@ -37,7 +37,7 @@ Your tone should be casual and informative.\n\nContext: {context}\nHistory: {his
     if 'llm' not in st.session_state:
         st.session_state.llm = Ollama(
             base_url="http://localhost:11434", 
-            model="mistral:instruct", 
+            model="llama3.2:1b", 
             verbose=True, 
             callback_manager=CallbackManager([StreamingStdOutCallbackHandler()])
         )
@@ -52,7 +52,7 @@ def create_vectorstore(pdf_path):
     data = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=200, length_function=len)
     all_splits = text_splitter.split_documents(data)
-    vectorstore = Chroma.from_documents(documents=all_splits, embedding=OllamaEmbeddings(model="mistral"))
+    vectorstore = Chroma.from_documents(documents=all_splits, embedding=OllamaEmbeddings(model="llama3.2:1b"))
     return vectorstore
 
 # Initialize session state
